@@ -1,0 +1,210 @@
+from parser import parser
+
+# class TACGenerator:
+
+#     def __init__(self):
+#         self.temp_count = 0
+#         self.label_count = 0
+#         self.code = []
+
+#     # ----------------------------------
+#     # Helpers
+#     # ----------------------------------
+
+#     def new_temp(self):
+#         self.temp_count += 1
+#         return f"t{self.temp_count}"
+
+#     def new_label(self):
+#         self.label_count += 1
+#         return f"L{self.label_count}"
+
+#     def emit(self, instruction):
+#         self.code.append(instruction)
+
+#     # ----------------------------------
+#     # Entry point
+#     # ----------------------------------
+
+#     def generate(self, ast):
+
+#         if ast[0] == 'program':
+#             for stmt in ast[1]:
+#                 self.gen_stmt(stmt)
+
+#         return self.code
+
+#     # ----------------------------------
+#     # Statements
+#     # ----------------------------------
+
+#     def gen_stmt(self, node):
+
+#         kind = node[0]
+
+#         if kind == 'declaration':
+#             return
+
+#         if kind == 'assign':
+#             self.gen_assign(node)
+#             return
+
+#         if kind == 'while':
+#             self.gen_while(node)
+#             return
+
+#         if kind == 'if':
+#             self.gen_if(node)
+#             return
+
+#     # ----------------------------------
+#     # Assignment
+#     # ----------------------------------
+
+#     def gen_assign(self, node):
+
+#         _, location, expr = node
+
+#         value = self.gen_expr(expr)
+#         target = self.gen_location(location)
+
+#         self.emit(f"{target} = {value}")
+
+#     # ----------------------------------
+#     # While
+#     # ----------------------------------
+
+#     def gen_while(self, node):
+
+#         _, condition, body = node
+
+#         start = self.new_label()
+#         end = self.new_label()
+
+#         self.emit(f"{start}:")
+
+#         cond = self.gen_expr(condition)
+
+#         self.emit(f"ifFalse {cond} goto {end}")
+
+#         for stmt in body:
+#             self.gen_stmt(stmt)
+
+#         self.emit(f"goto {start}")
+#         self.emit(f"{end}:")
+
+#     # ----------------------------------
+#     # If Else
+#     # ----------------------------------
+
+#     def gen_if(self, node):
+
+#         _, condition, then_body, else_body = node
+
+#         else_label = self.new_label()
+#         end_label = self.new_label()
+
+#         cond = self.gen_expr(condition)
+
+#         self.emit(f"ifFalse {cond} goto {else_label}")
+
+#         for stmt in then_body:
+#             self.gen_stmt(stmt)
+
+#         self.emit(f"goto {end_label}")
+
+#         self.emit(f"{else_label}:")
+
+#         for stmt in else_body:
+#             self.gen_stmt(stmt)
+
+#         self.emit(f"{end_label}:")
+
+#     # ----------------------------------
+#     # Expressions
+#     # ----------------------------------
+
+#     def gen_expr(self, node):
+
+#         kind = node[0]
+
+#         if kind == 'num':
+#             return str(node[1])
+
+#         if kind == 'id':
+#             return node[1]
+
+#         if kind == 'vector_access':
+#             index = self.gen_expr(node[2])
+#             return f"{node[1]}[{index}]"
+
+#         if kind == 'matrix_access':
+#             i = self.gen_expr(node[2])
+#             j = self.gen_expr(node[3])
+#             return f"{node[1]}[{i}][{j}]"
+
+#         if kind == 'relop':
+
+#             op = node[1]
+
+#             left = self.gen_expr(node[2])
+#             right = self.gen_expr(node[3])
+
+#             temp = self.new_temp()
+
+#             self.emit(
+#                 f"{temp} = {left} {op} {right}"
+#             )
+
+#             return temp
+
+#         if kind == 'binop':
+
+#             op = node[1]
+
+#             left = self.gen_expr(node[2])
+#             right = self.gen_expr(node[3])
+
+#             temp = self.new_temp()
+
+#             self.emit(
+#                 f"{temp} = {left} {op} {right}"
+#             )
+
+#             return temp
+
+#         raise Exception(f"Unknown expression {kind}")
+
+#     # ----------------------------------
+#     # Locations
+#     # ----------------------------------
+
+#     def gen_location(self, node):
+
+#         kind = node[0]
+
+#         if kind == 'id':
+#             return node[1]
+
+#         if kind == 'vector_access':
+
+#             idx = self.gen_expr(node[2])
+
+#             return f"{node[1]}[{idx}]"
+
+#         if kind == 'matrix_access':
+
+#             i = self.gen_expr(node[2])
+#             j = self.gen_expr(node[3])
+
+#             return f"{node[1]}[{i}][{j}]"
+
+#         raise Exception(f"Unknown location {kind}")
+    
+
+# generator = TACGenerator()
+
+# tac = generator.generate(result)
+
+# for line in tac:
+#     print(line)
