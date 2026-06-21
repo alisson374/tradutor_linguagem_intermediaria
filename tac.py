@@ -213,6 +213,7 @@ class Tac:
     self.temp_count = 0
     self.label_count = 0
     self.code = []
+    self.indent = 0;
 
   def generateTac(self, ast):
     for node in ast:
@@ -237,17 +238,19 @@ class Tac:
     start = self.while_label()
     end = self.end_label()
 
-    self.code.append(f"{start}:")
+    self.code.append(f"{"\t" * self.indent}{start}:")
+    self.indent += 1
 
     cond = self.generate_expression(condition)
 
-    self.code.append(f"IF {cond} GOTO {end}")
+    self.code.append(f"{"\t" * self.indent}IF {cond} GOTO {end}")
 
     for stmt in body:
         self.generate_statement(stmt)
 
-    self.code.append(f"GOTO {start}")
-    self.code.append(f"{end}:")
+    self.code.append(f"{"\t" * self.indent}GOTO {start}")
+    self.code.append(f"{"\t" * self.indent}{end}:")
+    self.indent -= 1
 
   def generate_expression(self, node):
     #to do 
