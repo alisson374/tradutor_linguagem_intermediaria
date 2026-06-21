@@ -217,16 +217,58 @@ class Tac:
   def generateTac(self, ast):
     for node in ast:
       self.generate_smt(node)
+    return self.code
 
   def generate_smt(self, node):
     smt = node[0]
     
     if smt == 'assign':
       self.generate_assign(node)
+    elif smt == 'while':
+      self.generate_while(node)
   
   def generate_assign(self, node):
     _, expr1, expr2 = node
-    print(expr1[1])
-    print(expr2[1])
+    self.code.append(f"{expr1[1]} = {expr2[1]}")
+
+  '''
+  def generate_while(self, node):
+    _, condition, body = node
+  
+    start = self.while_label()
+    end = self.end_label()
+
+    self.code.append(f"{start}:")
+
+    cond = self.gen_expr(condition)
+
+    self.code.append(f"IF {cond} GOTO {end}")
+
+    for stmt in body:
+        self.generate_smt(stmt)
+
+    self.code.append(f"GOTO {start}")
+    self.code.append(f"{end}:")
+  '''
+
+  def temp(self):
+    self.temp_count += 1
+    return f"T{self.temp_count}"  
+  
+  def while_label(self):
+    self.label_count += 1
+    return f"WHILE{self.label_count}"
+
+  def else_label(self):
+    self.label_count += 1
+    return f"ELSE{self.label_count}"
+
+  def end_label(self):
+    self.label_count += 1
+    return f"END{self.label_count}"
+
+  def if_label(self):
+    self.label_count += 1
+    return f"IF{self.label_count}"
 
 tac = Tac()

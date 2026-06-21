@@ -28,4 +28,5 @@ source = contentFile.strip()
 
 print_tokens(source)
 print_ast(mainStatementTree)
-tac.generateTac(mainStatementTree)
+for line in tac.generateTac(mainStatementTree):
+   print(line)
