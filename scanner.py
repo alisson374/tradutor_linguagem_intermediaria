@@ -104,4 +104,4 @@ def t_error(t):
 # --------------------------------
 # Construção do lexer
 # --------------------------------
-lexer = lex.lex()
+scanner = lex.lex()

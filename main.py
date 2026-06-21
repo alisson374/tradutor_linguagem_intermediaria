@@ -1,19 +1,31 @@
 from parser import parser
+from scanner import scanner
+from tac import tac
 
-source = """
-var int zezinho;
 
- num = 0;
- while(cont < 10) {
-    cont2 = 3.1415 * contador ^ 2;
-    if (cont < 5) {
-       num = num + cont2;
-    }
-    else {
-       cont = 0;
-    }
-    cont = cont + 1;
- }
-"""
-result = parser.parse(source)
-print(result)
+
+
+def print_tokens(src):
+  scanner.input(src)
+
+  print("Tokens table:")
+  print('{:<10} {:<10}'.format('Token', 'Lexeme'))
+  while True:  
+     tok = scanner.token()
+     if not tok: break
+     print(f"{tok.type:<10} {tok.value:<10}")
+
+def print_ast(tree):
+   print("\nAST:")
+   for node in tree:
+      print(f'stmt{tree.index(node)}: {node}\n')
+
+with open('codigo.txt', 'r', encoding='utf-8') as file:
+  contentFile = file.read()
+
+source = contentFile.strip()
+(prog, mainStatementTree) = parser.parse(source)
+
+print_tokens(source)
+print_ast(mainStatementTree)
+tac.generateTac(mainStatementTree)

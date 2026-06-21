@@ -1,4 +1,3 @@
-from parser import parser
 
 # class TACGenerator:
 
@@ -208,3 +207,26 @@ from parser import parser
 
 # for line in tac:
 #     print(line)
+
+class Tac:
+  def __init__(self):
+    self.temp_count = 0
+    self.label_count = 0
+    self.code = []
+
+  def generateTac(self, ast):
+    for node in ast:
+      self.generate_smt(node)
+
+  def generate_smt(self, node):
+    smt = node[0]
+    
+    if smt == 'assign':
+      self.generate_assign(node)
+  
+  def generate_assign(self, node):
+    _, expr1, expr2 = node
+    print(expr1[1])
+    print(expr2[1])
+
+tac = Tac()
