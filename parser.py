@@ -230,6 +230,7 @@ precedence = (
 def p_error(p):
   if p:
     print(f"Syntax error at '{p.value}'")
+    exit(1)
   else:
     print("Syntax error at EOF")
 
@@ -240,6 +241,4 @@ def p_error(p):
 
 # Build the parser
 parser = yacc.yacc()
-
-
 
