@@ -28,7 +28,7 @@ def p_statement_list_multiple(p):
 # ==========================================================
 
 def p_statement_declaration(p):
-  'statement : declaration SEMI'
+  'statement : declaration'
   p[0] = p[1]
 
 def p_statement_assignment(p):
@@ -48,9 +48,21 @@ def p_statement_if(p):
 # ==========================================================
 
 def p_declaration(p):
-  'declaration : RW_VAR type declarator_list'
-  p[0] = ('declaration', p[2], p[3])
+  'declaration : RW_VAR type_list'
+  p[0] = ('declaration', p[2])
 
+def p_type_list_single(p):
+  'type_list : type_declaration'
+  p[0] = [p[1]]
+
+def p_type_list_multiple(p):
+  'type_list : type_list type_declaration'
+  p[0] = p[1] + [p[2]]
+
+def p_type_declaration(p):
+  'type_declaration : type declarator_list SEMI'
+  p[0] = (p[1], p[2])
+  
 def p_type_int(p):
   'type : RW_INT'
   p[0] = 'int'
