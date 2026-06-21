@@ -231,7 +231,6 @@ class Tac:
     _, expr1, expr2 = node
     self.code.append(f"{expr1[1]} = {expr2[1]}")
 
-  '''
   def generate_while(self, node):
     _, condition, body = node
   
@@ -240,16 +239,23 @@ class Tac:
 
     self.code.append(f"{start}:")
 
-    cond = self.gen_expr(condition)
+    cond = self.generate_expression(condition)
 
     self.code.append(f"IF {cond} GOTO {end}")
 
     for stmt in body:
-        self.generate_smt(stmt)
+        self.generate_statement(stmt)
 
     self.code.append(f"GOTO {start}")
     self.code.append(f"{end}:")
-  '''
+
+  def generate_expression(self, node):
+    #to do 
+    return "expression"
+
+  def generate_statement(self, node):
+    #to do 
+    return "expression"
 
   def temp(self):
     self.temp_count += 1
