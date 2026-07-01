@@ -4,6 +4,9 @@
 ## Require package
   - $: pip install ply
 
+## Dev package
+  - $: pip install pytest
+
 ## Run
   - Add some code into codigo.txt
   - $: python main.py
