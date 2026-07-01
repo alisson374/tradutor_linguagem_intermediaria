@@ -225,8 +225,12 @@ class Tac:
     
     if smt == 'assign':
       self.generate_assign(node)
+
     elif smt == 'while':
       self.generate_while(node)
+
+    elif smt == 'if':
+      self.generate_if(node)
   
   def generate_assign(self, node):
     _, expr1, expr2 = node
@@ -252,6 +256,9 @@ class Tac:
     self.code.append(f"{"\t" * self.indent}{end}:")
     self.indent -= 1
 
+  def generate_if(self,node):
+    SystemError("not implemented yet")
+  
   def generate_expression(self, node):
     #to do 
     return "expression"
