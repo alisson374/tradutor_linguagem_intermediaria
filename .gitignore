@@ -6,3 +6,5 @@
 __pycache__/
 parser.out
 parsetab.py
+
+.pytest_cache/
