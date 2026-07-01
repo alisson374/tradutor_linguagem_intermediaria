@@ -2,9 +2,6 @@ from parser import parser
 from scanner import scanner
 from tac import tac
 
-
-
-
 def print_tokens(src):
   scanner.input(src)
 
@@ -20,13 +17,17 @@ def print_ast(tree):
    for node in tree:
       print(f'stmt{tree.index(node)}: {node}\n')
 
-with open('codigo.txt', 'r', encoding='utf-8') as file:
-  contentFile = file.read()
+def main():
+   with open('codigo.txt', 'r', encoding='utf-8') as file:
+      contentFile = file.read()
 
-source = contentFile.strip()
-(prog, mainStatementTree) = parser.parse(source)
+   source = contentFile.strip()
+   (prog, mainStatementTree) = parser.parse(source)
 
-print_tokens(source)
-print_ast(mainStatementTree)
-for line in tac.generateTac(mainStatementTree):
-   print(line)
+   print_tokens(source)
+   print_ast(mainStatementTree)
+   for line in tac.generateTac(mainStatementTree):
+      print(line)
+
+if __name__ == "__main__":
+   main()
