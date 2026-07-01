@@ -10,3 +10,6 @@
 ## Run
   - Add some code into codigo.txt
   - $: python main.py
+
+## Run test
+  - $: pytest
