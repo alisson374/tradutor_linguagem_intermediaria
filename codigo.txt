@@ -1,6 +1,8 @@
  var
     int cont, num;
     real cont2;
+    int a[10];
+    int b;
 
 num = 3.1415 * contador ^ 2;
  
@@ -13,6 +15,8 @@ while (cont > 2) {
   if (cont < 5) {
    num = num + cont2;
   } else {
-    num = 0;
+    a[2] = 0;
+    b = a[3];
+
   }
 } 

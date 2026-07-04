@@ -334,6 +334,14 @@ class Tac:
       return temp
     elif kind == 'relop':
       return self.generate_relop(node) 
+    elif kind == 'vector_access':
+      index = self.generate_expression(node[2])
+      return f"{node[1]}[{index}]"
+    elif kind == 'matrix_access':
+      i = self.generate_expression(node[2])
+      j = self.generate_expression(node[3])
+      return f"{node[1]}[{i}][{j}]"
+    
 
   def generate_relop(self, node):
     title = node[0]
@@ -382,6 +390,13 @@ class Tac:
 
     if kind == 'id': 
       return node[1]
+    if kind == 'vector_access':
+      index = self.generate_expression(node[2])
+      return f"{node[1]}[{index}]"
+    if kind == 'matrix_access':
+      i = self.generate_expression(node[2])
+      j = self.generate_expression(node[3])
+      return f"{node[1]}[{i}][{j}]"
 
     raise Exception(f"destino do tipo {kind} desconhecido")
 
