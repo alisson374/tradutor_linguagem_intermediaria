@@ -22,9 +22,11 @@ class TestTACGenerator:
     ]
 
     expected_tac = [
-      'if cont < 5 goto L0',
+      'IF cont < 5 GOTO L0',
       'num = num + cont2',
-      'L0:'
+      'GOTO L1',
+      'L0:',
+      'L1:'
     ]
 
     generated_tac = tac.generateTac(ast)

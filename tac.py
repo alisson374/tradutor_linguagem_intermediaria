@@ -213,14 +213,15 @@ class Tac:
     self.temp_count = 0
     self.label_count = 0
     self.code = []
-    self.indent = 0;
+    self.indent = 0
+    self.expressions = ['relop', 'binop']
 
   def generateTac(self, ast):
     for node in ast:
-      self.generate_smt(node)
+      self.generate_statement(node)
     return self.code
 
-  def generate_smt(self, node):
+  def generate_statement(self, node):
     smt = node[0]
     
     if smt == 'assign':
@@ -242,8 +243,9 @@ class Tac:
     start = self.while_label()
     end = self.end_label()
 
-    self.code.append(f"{"\t" * self.indent}{start}:")
+    start_label = self.set_start_label(start)
     self.indent += 1
+    self.code.append(start_label)
 
     cond = self.generate_expression(condition)
 
@@ -256,16 +258,50 @@ class Tac:
     self.code.append(f"{"\t" * self.indent}{end}:")
     self.indent -= 1
 
-  def generate_if(self,node):
-    SystemError("not implemented yet")
-  
-  def generate_expression(self, node):
-    #to do 
-    return "expression"
+  def generate_if(self, node):
+    _, expression_b, body = node
+    
+    if len(expression_b) != 4:
+      self.error("Invalid IF expression structure")
+    
+    if expression_b[0] != 'relop':
+      self.error("IF expression must be a relational operation")
+    
+    start = self.if_label()
+    end = self.end_label()
+    start_label = self.set_start_label(start)
+    self.indent += 1
+    
+    b_exp = self.generate_relop(expression_b)
+    
+    start_label += ' ' + b_exp + ' GOTO ' + end
+    self.code.append(start_label)
 
-  def generate_statement(self, node):
-    #to do 
+    # print(f"Generating IF expression {expression_b}, body {body}")
+    
+
+  def generate_expression(self, node):
+    #to do
     return "expression"
+  
+  def generate_relop(self, node):
+    title = node[0]
+    if title != "relop":
+      self.error("Expected a relational operation node")
+
+    _, operator, left, right = node
+
+    if left[0] == 'id':
+      left = left[1]
+    else:
+      left = left[0]
+    
+    if right[0] == 'id':
+      right = right[1]
+    else:
+      right = right[0]
+
+    return f"{left} {operator} {right}"
 
   def temp(self):
     self.temp_count += 1
@@ -286,5 +322,10 @@ class Tac:
   def if_label(self):
     self.label_count += 1
     return f"IF{self.label_count}"
+  
+  def set_start_label(self, start):
+    return f"{"\t" * self.indent}{start}:"
 
+  def error(self, message):
+    exit(f"TAC Generation Error: {message}")
 tac = Tac()
