@@ -1,22 +1,3 @@
- var
-    int cont, num;
-    real cont2;
-    int a[10];
-    int b;
-
-num = 3.1415 * contador ^ 2;
- 
- if (cont < 5) {
-   num = num + cont2;
- }
-
-while (cont > 2) {
-  num = num + cont;
-  if (cont < 5) {
-   num = num + cont2;
-  } else {
-    a[2] = 0;
-    b = a[3];
-
-  }
-} 
+if (cont < 5) {
+  num = num + cont2;
+}
