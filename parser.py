@@ -226,7 +226,7 @@ def p_if(p):
 
 def p_if_else(p):
   'if_stmt : RW_IF APAR expression FPAR ACHAVE statement_list FCHAVE RW_ELSE ACHAVE statement_list FCHAVE'
-  p[0] = ('if', p[3], p[6], p[10])
+  p[0] = ('ifelse', p[3], p[6], p[10])
 
 # ==========================================================
 # Operator precedence

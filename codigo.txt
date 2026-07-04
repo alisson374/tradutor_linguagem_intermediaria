@@ -12,5 +12,7 @@ while (cont > 2) {
   num = num + cont;
   if (cont < 5) {
    num = num + cont2;
+  } else {
+    num = 0;
   }
 } 

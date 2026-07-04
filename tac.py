@@ -227,12 +227,15 @@ class Tac:
     if smt == 'assign':
       self.generate_assign(node)
 
-    if smt == 'while':
+    elif smt == 'while':
       self.generate_while(node)
 
     elif smt == 'if':
       self.generate_if(node)
-  
+
+    elif smt == 'ifelse':
+      self.generate_if_else(node)
+
   def generate_assign(self, node):
     _, expr1, expr2 = node
     self.code.append(f"{"\t" * self.indent}{expr1[1]} = {expr2[1]}")
@@ -259,7 +262,7 @@ class Tac:
     self.indent -= 1
 
   def generate_if(self, node):
-    _, expression_b, body = node
+    _, expression_b, then_body = node
     
     if len(expression_b) != 4:
       self.error("Invalid IF expression structure")
@@ -276,9 +279,41 @@ class Tac:
     
     start_label = "IF" + ' ' + b_exp + ' GOTO ' + end
     self.code.append(f"{"\t" * self.indent}{start_label}")
+
+    for stmt in then_body:
+        self.generate_statement(stmt)
+        
+    self.code.append(f"{end}:")
     #self.indent -= 1
     # print(f"Generating IF expression {expression_b}, body {body}")
     
+  def generate_if_else(self, node):
+    _, expression_b, then_body, else_body = node
+    
+    if len(expression_b) != 4:
+      self.error("Invalid IF expression structure")
+    
+    if expression_b[0] != 'relop':
+      self.error("IF expression must be a relational operation")
+    
+    else_label = self.else_label()
+    end_label = self.end_label()
+    
+    b_exp = self.generate_relop(expression_b)
+    
+    start_label = "IF" + ' ' + b_exp + ' GOTO ' + else_label
+    self.code.append(f"{"\t" * self.indent}{start_label}")
+    
+    for stmt in then_body:
+        self.generate_statement(stmt)
+
+    self.code.append(f"{"\t" * self.indent}GOTO {end_label}")
+    self.code.append(f"{else_label}:")
+    
+    for stmt in else_body:
+        self.generate_statement(stmt)
+
+    self.code.append(f"{end_label}:")
 
   def generate_expression(self, node):
     #to do
