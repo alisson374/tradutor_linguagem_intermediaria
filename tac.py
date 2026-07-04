@@ -172,7 +172,7 @@
 
 #             return temp
 
-#         raise Exception(f"Unknown expression {kind}")
+#         self.error(f"Unknown expression {kind}")
 
 #     # ----------------------------------
 #     # Locations
@@ -198,7 +198,7 @@
 
 #             return f"{node[1]}[{i}][{j}]"
 
-#         raise Exception(f"Unknown location {kind}")
+#         self.error(f"Unknown location {kind}")
     
 
 # generator = TACGenerator()
@@ -208,13 +208,16 @@
 # for line in tac:
 #     print(line)
 
+from unicodedata import name
+
+
 class Tac:
   def __init__(self):
     self.temp_count = 0
     self.label_count = 0
     self.code = []
     self.indent = 0
-    self.expressions = ['relop', 'binop']
+    self.variables = []
 
   def generateTac(self, ast):
     for node in ast:
@@ -223,6 +226,9 @@ class Tac:
 
   def generate_statement(self, node):
     smt = node[0]
+    
+    if smt == 'declaration':
+      self.generate_table_variable(node)
     
     if smt == 'assign':
       self.generate_assign(node)
@@ -263,6 +269,10 @@ class Tac:
     self.code.append(f"{"\t" * self.indent}GOTO {start}")
     self.code.append(f"{end}:")
     self.indent -= 1
+
+  # def generate_table_variable(self, node):
+  #   _, var_type, = node
+    
 
   def generate_if(self, node):
     _, expression_b, then_body = node
@@ -383,7 +393,7 @@ class Tac:
     if kind == 'id': 
       return node[1]
 
-    raise Exception(f"destino do tipo {kind} desconhecido")
+    self.error(f"destino do tipo {kind} desconhecido")
 
 
     
