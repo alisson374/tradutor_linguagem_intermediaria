@@ -257,7 +257,7 @@ class Tac:
     self.indent += 1
     self.code.append(start_label)
 
-    cond = self.generate_expression(condition)
+    cond = self.generate_inverse_relop(condition)
 
     self.code.append(f"{"\t" * self.indent}IF {cond} GOTO {end}")
 
@@ -291,7 +291,7 @@ class Tac:
     #start_label = self.set_start_label(start)
     #self.indent += 1
     
-    b_exp = self.generate_relop(expression_b)
+    b_exp = self.generate_inverse_relop(expression_b)
     
     start_label = "IF" + ' ' + b_exp + ' GOTO ' + end
     self.code.append(f"{"\t" * self.indent}{start_label}")
@@ -315,7 +315,7 @@ class Tac:
     else_label = self.else_label()
     end_label = self.end_label()
     
-    b_exp = self.generate_relop(expression_b)
+    b_exp = self.generate_inverse_relop(expression_b)
     
     start_label = "IF" + ' ' + b_exp + ' GOTO ' + else_label
     self.code.append(f"{"\t" * self.indent}{start_label}")
@@ -346,7 +346,7 @@ class Tac:
       self.code.append(f"{"\t" * self.indent}{temp} = {left} {op} {right}")
       return temp
     elif kind == 'relop':
-      return self.generate_relop(node) 
+        return self.generate_relop(node) 
     elif kind == 'vector_access':
       index = self.generate_expression(node[2])
       return f"{node[1]}[{index}]"
@@ -356,7 +356,7 @@ class Tac:
       return f"{node[1]}[{i}][{j}]"
     
 
-  def generate_relop(self, node):
+  def generate_inverse_relop(self, node):
     inverse_table = {
       '<': '>=',
       '>': '<=',
@@ -370,8 +370,19 @@ class Tac:
       self.error("Expected a relational operation node")
 
     _, operator, left, right = node
+    first_operand = self.generate_expression(left)
+    second_operand = self.generate_expression(right)
 
-    return f"{left[1]} {inverse_table[operator]} {right[1]}"
+    return f"{first_operand} {inverse_table[operator]} {second_operand}"
+  
+  def generate_relop(self, node):
+    op = node[1]
+    left = self.generate_expression(node[2])
+    right = self.generate_expression(node[3])
+    temp = self.temp();
+
+    self.code.append(f"{"\t" * self.indent}{temp} = {left} {op} {right}")
+    return temp
 
   def temp(self):
     self.temp_count += 1
