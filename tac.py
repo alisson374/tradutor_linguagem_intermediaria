@@ -227,7 +227,7 @@ class Tac:
     if smt == 'assign':
       self.generate_assign(node)
 
-    elif smt == 'while':
+    if smt == 'while':
       self.generate_while(node)
 
     elif smt == 'if':
@@ -235,7 +235,7 @@ class Tac:
   
   def generate_assign(self, node):
     _, expr1, expr2 = node
-    self.code.append(f"{expr1[1]} = {expr2[1]}")
+    self.code.append(f"{"\t" * self.indent}{expr1[1]} = {expr2[1]}")
 
   def generate_while(self, node):
     _, condition, body = node
@@ -255,7 +255,7 @@ class Tac:
         self.generate_statement(stmt)
 
     self.code.append(f"{"\t" * self.indent}GOTO {start}")
-    self.code.append(f"{"\t" * self.indent}{end}:")
+    self.code.append(f"{end}:")
     self.indent -= 1
 
   def generate_if(self, node):
@@ -267,16 +267,16 @@ class Tac:
     if expression_b[0] != 'relop':
       self.error("IF expression must be a relational operation")
     
-    start = self.if_label()
+    #start = self.if_label()
     end = self.end_label()
-    start_label = self.set_start_label(start)
-    self.indent += 1
+    #start_label = self.set_start_label(start)
+    #self.indent += 1
     
     b_exp = self.generate_relop(expression_b)
     
-    start_label += ' ' + b_exp + ' GOTO ' + end
-    self.code.append(start_label)
-
+    start_label = "IF" + ' ' + b_exp + ' GOTO ' + end
+    self.code.append(f"{"\t" * self.indent}{start_label}")
+    #self.indent -= 1
     # print(f"Generating IF expression {expression_b}, body {body}")
     
 

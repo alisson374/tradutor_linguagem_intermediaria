@@ -7,4 +7,10 @@ num = 0;
  if (cont < 5) {
    num = num + cont2;
  }
- 
+
+while (cont > 2) {
+  num = num + cont;
+  if (cont < 5) {
+   num = num + cont2;
+  }
+} 
