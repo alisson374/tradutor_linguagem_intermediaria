@@ -357,23 +357,21 @@ class Tac:
     
 
   def generate_relop(self, node):
+    inverse_table = {
+      '<': '>=',
+      '>': '<=',
+      '<=': '>',
+      '>=': '<',
+      '==': '<>',
+      '<>': '=='
+    }
     title = node[0]
     if title != "relop":
       self.error("Expected a relational operation node")
 
     _, operator, left, right = node
 
-    if left[0] == 'id':
-      left = left[1]
-    else:
-      left = left[0]
-    
-    if right[0] == 'id':
-      right = right[1]
-    else:
-      right = right[0]
-
-    return f"{left} {operator} {right}"
+    return f"{left[1]} {inverse_table[operator]} {right[1]}"
 
   def temp(self):
     self.temp_count += 1

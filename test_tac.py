@@ -30,7 +30,7 @@ class TestTACGenerator:
       'IF cont >= 5 GOTO END1',
       'T1 = num + cont2',
       'num = T1',
-      'END1',
+      'END1:',
     ]
 
     tac = Tac()
