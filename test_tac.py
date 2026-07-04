@@ -26,7 +26,7 @@ class TestTACGenerator:
     ]
 
     expected_tac = [
-      'IF cont > 5 GOTO END1',
+      'IF cont >= 5 GOTO END1',
       'T1 = num + cont2',
       'num = T1',
       'END1',
