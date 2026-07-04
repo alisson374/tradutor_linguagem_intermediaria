@@ -1,4 +1,4 @@
-from tac import tac
+from tac import Tac
 
 class TestTACGenerator:
   def test_simple_assignment_shoud_paste(self):
@@ -11,7 +11,8 @@ class TestTACGenerator:
     expected_tac = [
       'num = 0'
     ]
-
+    
+    tac = Tac()
     generated_tac = tac.generateTac(ast)
 
     assert generated_tac == expected_tac, f"Expected {expected_tac}, but got {generated_tac}"
@@ -32,6 +33,7 @@ class TestTACGenerator:
       'END1',
     ]
 
+    tac = Tac()
     generated_tac = tac.generateTac(ast)
 
     assert generated_tac == expected_tac, f"Expected {expected_tac}, but got {generated_tac}" 
@@ -44,7 +46,7 @@ class TestTACGenerator:
       ('declaration', [('int', ['var', 'cont'])])
     ]
 
-
+    tac = Tac()
     tac.generateTac(ast)
 
     assert tac.variables[0] == ('int', ('var', 'cont')), f"Expected ('int', ('var', 'cont')), but got {tac.variables[0]}"
