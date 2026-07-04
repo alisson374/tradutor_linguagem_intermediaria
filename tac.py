@@ -237,8 +237,11 @@ class Tac:
       self.generate_if_else(node)
 
   def generate_assign(self, node):
-    _, expr1, expr2 = node
-    self.code.append(f"{"\t" * self.indent}{expr1[1]} = {expr2[1]}")
+    _, name, expr2 = node
+
+    target = self.gen_target(name)
+    value = self.generate_expression(expr2)
+    self.code.append(f"{"\t" * self.indent}{target} = {value}")
 
   def generate_while(self, node):
     _, condition, body = node
@@ -282,7 +285,7 @@ class Tac:
 
     for stmt in then_body:
         self.generate_statement(stmt)
-        
+
     self.code.append(f"{end}:")
     #self.indent -= 1
     # print(f"Generating IF expression {expression_b}, body {body}")
@@ -316,9 +319,22 @@ class Tac:
     self.code.append(f"{end_label}:")
 
   def generate_expression(self, node):
-    #to do
-    return "expression"
-  
+    kind = node[0]
+    if kind == 'num':
+      return str(node[1])
+    elif kind == 'id':
+      return node[1]
+    elif kind == 'binop':
+      op = node[1]
+      left = self.generate_expression(node[2])
+      right = self.generate_expression(node[3])
+      temp = self.temp();
+
+      self.code.append(f"{"\t" * self.indent}{temp} = {left} {op} {right}")
+      return temp
+    elif kind == 'relop':
+      return self.generate_relop(node) 
+
   def generate_relop(self, node):
     title = node[0]
     if title != "relop":
@@ -361,6 +377,16 @@ class Tac:
   def set_start_label(self, start):
     return f"{"\t" * self.indent}{start}:"
 
+  def gen_target(self, node):
+    kind = node[0]
+
+    if kind == 'id': 
+      return node[1]
+
+    raise Exception(f"destino do tipo {kind} desconhecido")
+
+
+    
   def error(self, message):
     exit(f"TAC Generation Error: {message}")
 tac = Tac()
