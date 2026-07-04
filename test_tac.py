@@ -43,10 +43,13 @@ class TestTACGenerator:
     #   int cont;
     
     ast = [
-      ('declaration', [('int', ['var', 'cont'])])
+      ('declaration', [('int', [('var', 'cont')])])
     ]
 
+    expected_tac = ('int', ('var', 'cont'))
+    
     tac = Tac()
     tac.generateTac(ast)
 
-    assert tac.variables[0] == ('int', ('var', 'cont')), f"Expected ('int', ('var', 'cont')), but got {tac.variables[0]}"
+    var = tac.variables[0]
+    assert var == expected_tac, f"Expected {expected_tac}, but got {var}"
