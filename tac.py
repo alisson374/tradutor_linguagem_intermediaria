@@ -208,8 +208,6 @@
 # for line in tac:
 #     print(line)
 
-from unicodedata import name
-
 
 class Tac:
   def __init__(self):
@@ -230,7 +228,7 @@ class Tac:
     if smt == 'declaration':
       self.generate_table_variable(node)
     
-    if smt == 'assign':
+    elif smt == 'assign':
       self.generate_assign(node)
 
     elif smt == 'while':
@@ -270,9 +268,14 @@ class Tac:
     self.code.append(f"{end}:")
     self.indent -= 1
 
-  # def generate_table_variable(self, node):
-  #   _, var_type, = node
-    
+  def generate_table_variable(self, node):
+    _, v_types, = node
+    for var in v_types:
+      v_type, variables = var
+      for variable in variables:
+        self.variables.append((v_type, variable))
+        # print((v_type, variable))
+          
 
   def generate_if(self, node):
     _, expression_b, then_body = node
