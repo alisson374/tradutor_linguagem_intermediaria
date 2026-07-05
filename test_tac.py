@@ -1,3 +1,5 @@
+import pytest
+
 from tac import Tac
 
 class TestTACGenerator:
@@ -38,18 +40,40 @@ class TestTACGenerator:
 
     assert generated_tac == expected_tac, f"Expected {expected_tac}, but got {generated_tac}" 
 
-  def test_declaration_variable_should_generate_correct_tac(self):
-    # var
-    #   int cont;
-    
+  @pytest.mark.parametrize(
+    "type_var, expected",
+    [
+      ("int", ('int', ('var', 'cont'))), # var int cont;
+      ("char", ('char', ('var', 'cont'))) # var char cont;
+    ],
+  )
+  def test_declaration_simple_variable_should_generate_correct_tac(self, type_var, expected):
     ast = [
-      ('declaration', [('int', [('var', 'cont')])])
+      ('declaration', [(type_var, [('var', 'cont')])])
     ]
 
-    expected_tac = ('int', ('var', 'cont'))
-    
     tac = Tac()
     tac.generateTac(ast)
 
     var = tac.variables[0]
-    assert var == expected_tac, f"Expected {expected_tac}, but got {var}"
+    assert var == expected, f"Expected {expected}, but got {var}"
+  
+  @pytest.mark.parametrize(
+    "type_var, expected",
+    [
+      ('int', ('int', ('vector', 'x', ('num', 8)))), # var int x[8];
+      ('char', ('char', ('vector', 'x', ('num', 8)))) # var char x[8];
+    ],
+  )
+  def test_declaration_vector_should_generate_correct_tac(self, type_var, expected):
+    # var int cont;
+    
+    ast = [
+      ('declaration', [(type_var, [('vector', 'x', ('num', 8))])])
+    ]
+
+    tac = Tac()
+    tac.generateTac(ast)
+
+    var = tac.variables[0]
+    assert var == expected, f"Expected {expected}, but got {var}"
