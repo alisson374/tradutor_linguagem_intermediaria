@@ -240,10 +240,18 @@ class Tac:
     elif smt == 'ifelse':
       self.generate_if_else(node)
 
+  def generate_table_variable(self, node):
+    _, v_types, = node
+    for var in v_types:
+      v_type, variables = var
+      for variable in variables:
+        self.variables.append((v_type, variable))
+   
   def generate_assign(self, node):
     _, name, expr2 = node
     if not self.check_variable(name[1]):
       self.error(f"Variable '{name[1]}' not declared")
+
     else:
       target = self.gen_target(name)
       value = self.generate_expression(expr2)
@@ -269,14 +277,7 @@ class Tac:
     self.code.append(f"{"\t" * self.indent}GOTO {start}")
     self.code.append(f"{end}:")
     self.indent -= 1
-
-  def generate_table_variable(self, node):
-    _, v_types, = node
-    for var in v_types:
-      v_type, variables = var
-      for variable in variables:
-        self.variables.append((v_type, variable))
-          
+     
   def check_variable(self, variable):
     name = variable
 
@@ -343,37 +344,79 @@ class Tac:
 
   def generate_expression(self, node):
     kind = node[0]
+    
     if kind == 'num':
       return str(node[1])
+    
     elif kind == 'id':
       if not self.check_variable(node):
         self.error(f"Variable '{node[1]}' not declared")
       return node[1]
+    
     elif kind == 'binop':
       op = node[1]
       left = self.generate_expression(node[2])
       right = self.generate_expression(node[3])
-      temp = self.temp();
+      temp = self.temp()
 
       self.code.append(f"{"\t" * self.indent}{temp} = {left} {op} {right}")
       return temp
+    
     elif kind == 'relop':
         return self.generate_relop(node) 
+    
     elif kind == 'vector_access':
       if not self.check_variable(node[1]):
         self.error(f"Variable '{node[1]}' not declared")
       else:
         index = self.generate_expression(node[2])
-        return f"{node[1]}[{index}]"
+        vec = self.generate_vector(node, index)
+        temp = self.temp()
+        self.code.append(f"{"\t" * self.indent}{temp} = {vec}")
+        return temp
+
     elif kind == 'matrix_access':
-      if not self.check_variable(node[1]) or not self.check_variable(node[2]) or not self.check_variable(node[3]):
+      if not self.check_variable(node[1]):
         self.error(f"Variable '{node[1]}' or its indices not declared")
       else: 
         i = self.generate_expression(node[2])
         j = self.generate_expression(node[3])
-        return f"{node[1]}[{i}][{j}]"
-    
+        mat = self.generate_matrix(node, i, j)
+        temp = self.temp()
+        self.code.append(f"{"\t" * self.indent}{temp} = {mat}")
+        return temp
 
+  def generate_vector(self, node, index):
+    temp = self.temp()
+    self.code.append(f"{"\t" * self.indent}{temp} = c({node[1]})")
+    
+    temp2 = self.temp()
+    self.code.append(f"{"\t" * self.indent}{temp2} = {index} * largura({node[1]})")
+
+    return f"{temp}[{temp2}]"
+  
+  def generate_matrix(self, node, i, j):
+    m_j = self.get_j_on_matrix_in_table_variable(node[1])
+    temp = self.temp()
+    
+    self.code.append(f"{"\t" * self.indent}{temp} = {i} * {m_j}")
+    self.code.append(f"{"\t" * self.indent}{temp} = {temp} + {j}")
+    
+    temp2 = self.temp()
+    self.code.append(f"{"\t" * self.indent}{temp2} = c({node[1]})")
+
+    temp3 = self.temp()
+    self.code.append(f"{"\t" * self.indent}{temp3} = {temp} * largura({node[1]})")
+
+    return f"{temp2}[{temp3}]"
+  
+  def get_j_on_matrix_in_table_variable(self, variable_name):
+    for _, declarator in self.variables:
+      if isinstance(declarator, tuple) and len(declarator) >= 2:
+        if declarator[0] == 'matrix' and declarator[1] == variable_name:
+          return declarator[3][1]
+    return self.error(f"Matrix '{variable_name}' not found in the variable table")
+  
   def generate_inverse_relop(self, node):
     inverse_table = {
       '<': '>=',
@@ -430,17 +473,19 @@ class Tac:
 
     if kind == 'id': 
       return node[1]
+    
     if kind == 'vector_access':
       index = self.generate_expression(node[2])
-      return f"{node[1]}[{index}]"
+      return self.generate_vector(node, index)
+    
     if kind == 'matrix_access':
       i = self.generate_expression(node[2])
       j = self.generate_expression(node[3])
-      return f"{node[1]}[{i}][{j}]"
+      return self.generate_matrix(node, i, j)
 
     self.error(f"destino do tipo {kind} desconhecido")
     
   def error(self, message):
     exit(f"TAC Generation Error: {message}")
-    
+
 tac = Tac()
