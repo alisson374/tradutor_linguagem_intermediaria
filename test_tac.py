@@ -5,6 +5,7 @@ class TestTACGenerator:
     # num = 0;
     
     ast = [
+      ('declaration', [('int', [('var', 'num')])]),
       ('assign', ('id', 'num'), ('num', 0))
     ]
 
@@ -23,6 +24,7 @@ class TestTACGenerator:
     # }
 
     ast = [
+      ('declaration', [('int', [('var', 'cont'), ('var', 'num'), ('var', 'cont2')])]),
       ('if', ('relop', '<', ('id', 'cont'), ('num', 5)), [('assign', ('id', 'num'), ('binop', '+', ('id', 'num'), ('id', 'cont2')))])
     ]
 

@@ -1,7 +1,4 @@
- var
-    int cont, num;
- 
-if (cont < (5 > 3)) {
-   num = num + cont2;
-   cont = 3+7*3 > 5;
+var int cont, num, cont2;
+if (cont < 5) {
+       num = num + cont2;
 }

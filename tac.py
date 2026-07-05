@@ -242,10 +242,12 @@ class Tac:
 
   def generate_assign(self, node):
     _, name, expr2 = node
-
-    target = self.gen_target(name)
-    value = self.generate_expression(expr2)
-    self.code.append(f"{"\t" * self.indent}{target} = {value}")
+    if not self.check_variable(name[1]):
+      self.error(f"Variable '{name[1]}' not declared")
+    else:
+      target = self.gen_target(name)
+      value = self.generate_expression(expr2)
+      self.code.append(f"{"\t" * self.indent}{target} = {value}")
 
   def generate_while(self, node):
     _, condition, body = node
@@ -276,6 +278,21 @@ class Tac:
         self.variables.append((v_type, variable))
         # print((v_type, variable))
           
+  def check_variable(self, variable):
+    name = variable
+
+    if isinstance(variable, tuple) and len(variable) >= 2:
+        if variable[0] == 'id':
+            name = variable[1]
+        elif variable[0] in ('var', 'vector', 'matrix'):
+            name = variable[1]
+
+    for _, declarator in self.variables:
+        if isinstance(declarator, tuple) and len(declarator) >= 2:
+            if declarator[1] == name:
+                return True
+
+    return False
 
   def generate_if(self, node):
     _, expression_b, then_body = node
@@ -336,6 +353,8 @@ class Tac:
     if kind == 'num':
       return str(node[1])
     elif kind == 'id':
+      if not self.check_variable(node):
+        self.error(f"Variable '{node[1]}' not declared")
       return node[1]
     elif kind == 'binop':
       op = node[1]
@@ -348,12 +367,18 @@ class Tac:
     elif kind == 'relop':
         return self.generate_relop(node) 
     elif kind == 'vector_access':
-      index = self.generate_expression(node[2])
-      return f"{node[1]}[{index}]"
+      if not self.check_variable(node[1]):
+        self.error(f"Variable '{node[1]}' not declared")
+      else:
+        index = self.generate_expression(node[2])
+        return f"{node[1]}[{index}]"
     elif kind == 'matrix_access':
-      i = self.generate_expression(node[2])
-      j = self.generate_expression(node[3])
-      return f"{node[1]}[{i}][{j}]"
+      if not self.check_variable(node[1]) or not self.check_variable(node[2]) or not self.check_variable(node[3]):
+        self.error(f"Variable '{node[1]}' or its indices not declared")
+      else: 
+        i = self.generate_expression(node[2])
+        j = self.generate_expression(node[3])
+        return f"{node[1]}[{i}][{j}]"
     
 
   def generate_inverse_relop(self, node):
