@@ -276,7 +276,6 @@ class Tac:
       v_type, variables = var
       for variable in variables:
         self.variables.append((v_type, variable))
-        # print((v_type, variable))
           
   def check_variable(self, variable):
     name = variable
@@ -303,11 +302,7 @@ class Tac:
     if expression_b[0] != 'relop':
       self.error("IF expression must be a relational operation")
     
-    #start = self.if_label()
     end = self.end_label()
-    #start_label = self.set_start_label(start)
-    #self.indent += 1
-    
     b_exp = self.generate_inverse_relop(expression_b)
     
     start_label = "IF" + ' ' + b_exp + ' GOTO ' + end
@@ -317,8 +312,6 @@ class Tac:
         self.generate_statement(stmt)
 
     self.code.append(f"{end}:")
-    #self.indent -= 1
-    # print(f"Generating IF expression {expression_b}, body {body}")
     
   def generate_if_else(self, node):
     _, expression_b, then_body, else_body = node
@@ -446,9 +439,8 @@ class Tac:
       return f"{node[1]}[{i}][{j}]"
 
     self.error(f"destino do tipo {kind} desconhecido")
-
-
     
   def error(self, message):
     exit(f"TAC Generation Error: {message}")
+    
 tac = Tac()
