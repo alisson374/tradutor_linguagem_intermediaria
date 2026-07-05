@@ -77,3 +77,23 @@ class TestTACGenerator:
 
     var = tac.variables[0]
     assert var == expected, f"Expected {expected}, but got {var}"
+  
+  @pytest.mark.parametrize(
+    "type_var, expected",
+    [
+      ('int', ('int', ('matrix', 'a', ('num', 10), ('num', 2)))), # var inta[10][2];
+      ('char', ('char', ('matrix', 'a', ('num', 10), ('num', 2)))) # var char a[10][2];
+    ],
+  )
+  def test_declaration_matrix_should_generate_correct_tac(self, type_var, expected):
+    # var int cont;
+    
+    ast = [
+      ('declaration', [(type_var, [('matrix', 'a', ('num', 10), ('num', 2))])])
+    ]
+
+    tac = Tac()
+    tac.generateTac(ast)
+
+    var = tac.variables[0]
+    assert var == expected, f"Expected {expected}, but got {var}"
