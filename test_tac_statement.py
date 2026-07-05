@@ -1,4 +1,3 @@
-import pytest
 from tac import Tac
 
 class TestTacStatement:
